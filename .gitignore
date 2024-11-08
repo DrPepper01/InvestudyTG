@@ -1,0 +1,35 @@
+# .gitignore
+
+# Python files
+*.pyc
+__pycache__/
+
+# Django #
+*.pot
+__pycache__
+db.sqlite3
+media
+
+# PyCharm files
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/shelf
+
+# Environment & settings
+.env
+.env.*
+
+# Django migrations
+*/migrations/*.py
+!*/migrations/__init__.py
+
+# IDE/editor configs
+.vscode/
+.idea/
+.DS_Store
+
+# Docker files
+/__pycache__/
+*.log

@@ -1,0 +1,47 @@
+version: '3.9'
+
+services:
+
+  db:
+    image: postgres:14
+    container_name: tg_db
+    env_file:
+      - .env
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - invest_network
+
+  web:
+    build: .
+    container_name: tg_app
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: python manage.py runserver 0.0.0.0:8000
+    ports:
+      - "8002:8000"
+    depends_on:
+      - db
+    networks:
+      - invest_network
+
+  bot:
+    build: .
+    container_name: bot_check
+    env_file:
+      - .env
+    command: python manage.py runbot
+    depends_on:
+      - db
+    networks:
+      - invest_network
+
+networks:
+  invest_network:
+
+volumes:
+  postgres_data:
