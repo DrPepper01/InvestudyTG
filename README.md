@@ -4,7 +4,7 @@
 
 This is a simple Django project for a Telegram support bot. The bot allows users to report issues, send screenshots, and receive assistance from the support team.
 
-![Investudy Support Bot](https://t.me/Investudy_support_bot)
+!(https://t.me/Investudy_support_bot)
 
 ### Main features
 
@@ -35,8 +35,8 @@ Ensure you have the following installed:
     
 ### Installation
 
-      git clone git@github.com:USERNAME/PROJECT_NAME.git
-      cd PROJECT_NAME
+      git clone git@github.com:DrPepper01/InvestudyTG.git
+      cd InvestudyTG
       
 ### Create an Environment Variables File
 
