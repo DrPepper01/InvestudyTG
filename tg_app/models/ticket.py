@@ -20,7 +20,10 @@ class Ticket(BaseModel):
     additional_info = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='new')
-
+    page = models.CharField(max_length=100, null=True, blank=True)
+    section = models.CharField(max_length=100, null=True, blank=True)
+    is_suggestion = models.BooleanField(default=False)
+    
     def save(self, *args, **kwargs):
         if not self.ticket_id:
             from uuid import uuid4

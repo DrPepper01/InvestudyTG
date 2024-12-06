@@ -29,11 +29,14 @@ services:
     networks:
       - invest_network
 
+
   bot:
     build: .
     container_name: bot_check
     env_file:
       - .env
+    volumes:
+      - .:/app
     command: python manage.py runbot
     depends_on:
       - db
