@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tg-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tg-bot
+  template:
+    metadata:
+      labels:
+        app: tg-bot
+    spec:
+      containers:
+        - name: tg-bot
+          image: investudy/tg-bot:ultimate-06-12-2024.2
+          command: ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runbot"]
+          ports:
+            - containerPort: 8000
+          env:
+            - name: SECRET_KEY
+              value: "django-insecure-q(a67*vt4j!-725$e&&c-!^^f+#7u7r7b^5&a54j3s8ev(3hl6" # Укажите ваш SECRET_KEY
+            - name: DEBUG
+              value: "True" # Укажите True только для локальной разработки
+            - name: TELEGRAM_BOT_TOKEN
+              value: "7580621670:AAFq-1O0eNTjo7rU4Ut8viIdEqETeOjErIU" # Укажите ваш TELEGRAM_BOT_TOKEN
+            - name: SUPPORT_CHAT_ID
+              value: "-1002360994971" # Укажите ваш SUPPORT_CHAT_ID
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_DB
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_HOST
+            - name: POSTGRES_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-config
+                  key: POSTGRES_PORT
