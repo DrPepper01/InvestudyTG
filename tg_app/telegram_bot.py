@@ -158,17 +158,6 @@ async def ask_description(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
 
 async def ask_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
     """Сохраняет скриншот и запрашивает дополнительную информацию."""
-    user_input = update.message.text if update.message.text else ""
-
-    if user_input == "Отмена":
-        return await cancel(update, context)
-
-    if user_input.startswith('/'):
-        return await handle_command_during_conversation(update, context)
-
-    keyboard = [[KeyboardButton("Отмена")]]
-    reply_markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
-
     if update.message.photo:
         # Сохранение фото
         photo_file = await update.message.photo[-1].get_file()
@@ -186,7 +175,7 @@ async def ask_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         )
         return ASK_ADDITIONAL_INFO
 
-    elif user_input.lower() == 'нет':
+    elif update.message.text and update.message.text.lower() == 'нет':
         context.user_data['screenshot'] = None
         logger.info("Скриншот не предоставлен.")
 
@@ -196,16 +185,19 @@ async def ask_screenshot(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         )
         return ASK_ADDITIONAL_INFO
 
+    elif update.message.text and update.message.text.startswith('/'):
+        return await handle_command_during_conversation(update, context)
+
     else:
         await update.message.reply_text(
             "Пожалуйста, отправьте скриншот или фото, иллюстрирующее проблему. "
-            "Если у вас нет скриншота, напишите 'Нет' для пропуска.",
-            reply_markup=reply_markup
+            "Если у вас нет скриншота, напишите 'Нет' для пропуска."
         )
         return ASK_SCREENSHOT
 
 async def handle_unexpected_photo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     """Обрабатывает фото, отправленные вне контекста диалога."""
+    # Ответ для пользователя, если фото отправлено вне контекста
     await update.message.reply_text(
         "Если вы хотите отправить фото с ошибкой, нажмите /start, выберите страницу, на которой возникает ошибка, и следуйте дальнейшим инструкциям."
     )
@@ -560,7 +552,8 @@ def main():
                 MessageHandler(filters.COMMAND, handle_command_during_conversation),
             ],
             ASK_SCREENSHOT: [
-                MessageHandler(filters.PHOTO | (filters.TEXT & ~filters.COMMAND), ask_screenshot),
+                MessageHandler(filters.PHOTO, ask_screenshot),  # Обработка только фото
+                MessageHandler(filters.TEXT & ~filters.COMMAND, ask_screenshot),  # Обработка текста "Нет"
                 MessageHandler(filters.COMMAND, handle_command_during_conversation),
             ],
             ASK_ADDITIONAL_INFO: [
@@ -603,9 +596,9 @@ def main():
     )
 
     # Добавление обработчиков
-    application.add_handler(MessageHandler(filters.PHOTO, handle_unexpected_photo))  # Новый обработчик
     application.add_handler(conv_handler)
     application.add_handler(suggestions_handler)
+    application.add_handler(MessageHandler(filters.PHOTO, handle_unexpected_photo))  # Новый обработчик
     application.add_handler(CommandHandler("help", help_command))
 
     # Запуск бота
