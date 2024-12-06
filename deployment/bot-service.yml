@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tg-bot-loadbalancer
+spec:
+  type: LoadBalancer
+  selector:
+    app: tg-bot
+  ports:
+    - port: 8000
+      targetPort: 8000
+      nodePort: 31111
