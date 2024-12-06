@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: tg-bot
-          image: investudy/tg-bot:ultimate-06-12-2024.2
+          image: investudy/tg-bot:ultimate-06-12-2024.3
           command: ["sh", "-c", "python manage.py makemigrations && python manage.py migrate && python manage.py runbot"]
           ports:
             - containerPort: 8000
